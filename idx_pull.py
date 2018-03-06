@@ -11,10 +11,9 @@ options.binary_location = "/usr/bin/chromium"
 driver = webdriver.Chrome("/home/daniel/tools_embedded/program_python/chromedriver")
 #driver = webdriver.Chrome(chrome_options=options)
 driver.get('http://www.idx.co.id/id-id/beranda/perusahaantercatat/laporankeuangandantahunan.aspx')
-years = ['2014','2015','2016']
+years = ['2009','2010','2011','2012','2013','2014','2015','2016']
 triwulans = ['Triwulan I','Triwulan II','Triwulan III']
 for year in years:
-	
 	
 	for triwulan in triwulans:
 		# click radio button
