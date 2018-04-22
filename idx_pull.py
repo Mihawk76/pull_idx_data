@@ -1,10 +1,14 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import time
 import urllib
 import sys
 import MySQLdb
 import sys
+from selenium.common.exceptions import TimeoutException
  
 # open a database connection
 # be sure to change the host IP address, username, password and database name to match your own
@@ -30,18 +34,25 @@ options.add_argument("--test-type")
 options.binary_location = "/usr/bin/chromium"
 driver = webdriver.Chrome("/home/daniel/tools_embedded/program_python/chromedriver")
 #driver = webdriver.Chrome(chrome_options=options)
-driver.get('http://www.idx.co.id/id-id/beranda/perusahaantercatat/laporankeuangandantahunan.aspx')
 years = ['2009','2010','2011','2012','2013','2014','2015','2016']
+years = ['2017','2018']
 triwulans = ['Triwulan I','Triwulan II','Triwulan III']
-for listComp in listCompany:
+for listComp in listCompany[253:]:
 	for year in years:
 	
 		for triwulan in triwulans:
+			#wait load
+			driver.get('http://www.idx.co.id/id-id/beranda/perusahaantercatat/laporankeuangandantahunan.aspx')
+			delay = 3 #seconds
+			try:
+				myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
+				print "Page is ready!"
+			except TimeoutException:
+				print "Loading took too much time!"
 			# click radio button
 			python_button = driver.find_elements_by_xpath("//input[@name='dnn$ctr518$MainView$FR' and @value='rbFinancialReport']")[0]
 			python_button.click()
  
-
 			# Drop down menu
 			select = Select(driver.find_element_by_id('dnn_ctr518_MainView_ddlYearCalendar'))
 
@@ -72,7 +83,7 @@ for listComp in listCompany:
 			try:
 				link = driver.find_element_by_id('dnn_ctr518_MainView_lvSearchingResult_ctrl0_rptMain_ctl00_hl')
 				print(link.get_attribute('href'))
-				urllib.urlretrieve(link.get_attribute('href'), year + "_" + triwulan + "_laporan1.pdf")
+				urllib.urlretrieve(link.get_attribute('href'), listComp + "_" + year + "_" + triwulan + "_laporan1.pdf")
 			except Exception as ex:
 				print "Unexpected error:", sys.exc_info()[0]
 			#html = response.read()
